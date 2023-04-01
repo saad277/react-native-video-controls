@@ -988,25 +988,6 @@ export default class VideoPlayer extends Component {
   }
 
   /**
-   * Render the volume slider and attach the pan handlers
-   */
-
-  /**
-   * Render fullscreen toggle and set icon based on the fullscreen state.
-   */
-  renderFullscreen() {
-    let source =
-      this.state.isFullscreen === true
-        ? require('./assets/img/shrink.png')
-        : require('./assets/img/expand.png');
-    return this.renderControl(
-      <Image source={source} />,
-      this.methods.toggleFullscreen,
-      styles.controls.fullscreen,
-    );
-  }
-
-  /**
    * Render bottom control group and wrap it in a holder
    */
   renderBottomControls() {
@@ -1065,7 +1046,7 @@ export default class VideoPlayer extends Component {
               styles.seekbar.fill,
               {
                 width: this.state.seekerFillWidth,
-                backgroundColor: this.props.seekColor || '#FFF',
+                backgroundColor: '#FFF',
               },
             ]}
             pointerEvents={'none'}
@@ -1362,15 +1343,18 @@ const styles = {
     },
     track: {
       backgroundColor: '#333',
-      height: 1,
+      height: 4,
       position: 'relative',
       top: 14,
       width: '100%',
+      borderRadius: 12,
     },
     fill: {
       backgroundColor: '#FFF',
-      height: 1,
+      height: 4,
       width: '100%',
+      borderTopLeftRadius: 12,
+      borderBottomLeftRadius: 12,
     },
     handle: {
       position: 'absolute',
@@ -1381,7 +1365,7 @@ const styles = {
     circle: {
       borderRadius: 12,
       position: 'relative',
-      top: 8,
+      top: 10,
       left: 8,
       height: 12,
       width: 12,
