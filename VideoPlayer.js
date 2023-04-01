@@ -31,8 +31,6 @@ export default class VideoPlayer extends Component {
     volume: 1,
     title: '',
     rate: 1,
-    showTimeRemaining: true,
-    showHours: false,
   };
 
   constructor(props) {
@@ -53,8 +51,7 @@ export default class VideoPlayer extends Component {
 
       isFullscreen:
         this.props.isFullScreen || this.props.resizeMode === 'cover' || false,
-      showTimeRemaining: this.props.showTimeRemaining,
-      showHours: this.props.showHours,
+      showTimeRemaining: true,
       volumeTrackWidth: 0,
       volumeFillWidth: 0,
       seekerFillWidth: 0,
@@ -161,7 +158,7 @@ export default class VideoPlayer extends Component {
     };
   }
 
-  componentDidUpdate = prevProps => {
+  componentDidUpdate = (prevProps) => {
     const {isFullscreen} = this.props;
 
     if (prevProps.isFullscreen !== isFullscreen) {
@@ -565,22 +562,10 @@ export default class VideoPlayer extends Component {
     const symbol = this.state.showRemainingTime ? '-' : '';
     time = Math.min(Math.max(time, 0), this.state.duration);
 
-    if (!this.state.showHours) {
-      const formattedMinutes = padStart(Math.floor(time / 60).toFixed(0), 2, 0);
-      const formattedSeconds = padStart(Math.floor(time % 60).toFixed(0), 2, 0);
-
-      return `${symbol}${formattedMinutes}:${formattedSeconds}`;
-    }
-
-    const formattedHours = padStart(Math.floor(time / 3600).toFixed(0), 2, 0);
-    const formattedMinutes = padStart(
-      (Math.floor(time / 60) % 60).toFixed(0),
-      2,
-      0,
-    );
+    const formattedMinutes = padStart(Math.floor(time / 60).toFixed(0), 2, 0);
     const formattedSeconds = padStart(Math.floor(time % 60).toFixed(0), 2, 0);
 
-    return `${symbol}${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+    return `${symbol}${formattedMinutes}:${formattedSeconds}`;
   }
 
   /**
@@ -952,12 +937,6 @@ export default class VideoPlayer extends Component {
     const backControl = this.props.disableBack
       ? this.renderNullControl()
       : this.renderBack();
-    const volumeControl = this.props.disableVolume
-      ? this.renderNullControl()
-      : this.renderVolume();
-    const fullscreenControl = this.props.disableFullscreen
-      ? this.renderNullControl()
-      : this.renderFullscreen();
 
     return (
       <Animated.View
@@ -974,10 +953,20 @@ export default class VideoPlayer extends Component {
           imageStyle={[styles.controls.vignette]}>
           <SafeAreaView style={styles.controls.topControlGroup}>
             {backControl}
-            <View style={styles.controls.pullRight}>
-              {volumeControl}
-              {fullscreenControl}
-            </View>
+
+            {!!this.props.videoTitle && (
+              <View style={styles.controls.pullRight}>
+                <Text
+                  numberOfLines={1}
+                  style={{
+                    color: 'white',
+                    width: '90%',
+                    ...this.props.titleProps,
+                  }}>
+                  {this.props.videoTitle}
+                </Text>
+              </View>
+            )}
           </SafeAreaView>
         </ImageBackground>
       </Animated.View>
@@ -1001,26 +990,6 @@ export default class VideoPlayer extends Component {
   /**
    * Render the volume slider and attach the pan handlers
    */
-  renderVolume() {
-    return (
-      <View style={styles.volume.container}>
-        <View
-          style={[styles.volume.fill, {width: this.state.volumeFillWidth}]}
-        />
-        <View
-          style={[styles.volume.track, {width: this.state.volumeTrackWidth}]}
-        />
-        <View
-          style={[styles.volume.handle, {left: this.state.volumePosition}]}
-          {...this.player.volumePanResponder.panHandlers}>
-          <Image
-            style={styles.volume.icon}
-            source={require('./assets/img/volume.png')}
-          />
-        </View>
-      </View>
-    );
-  }
 
   /**
    * Render fullscreen toggle and set icon based on the fullscreen state.
@@ -1087,7 +1056,7 @@ export default class VideoPlayer extends Component {
         {...this.player.seekPanResponder.panHandlers}>
         <View
           style={styles.seekbar.track}
-          onLayout={event =>
+          onLayout={(event) =>
             (this.player.seekerWidth = event.nativeEvent.layout.width)
           }
           pointerEvents={'none'}>
@@ -1217,7 +1186,7 @@ export default class VideoPlayer extends Component {
         <View style={[styles.player.container, this.styles.containerStyle]}>
           <Video
             {...this.props}
-            ref={videoPlayer => (this.player.ref = videoPlayer)}
+            ref={(videoPlayer) => (this.player.ref = videoPlayer)}
             resizeMode={this.state.resizeMode}
             volume={this.state.volume}
             paused={this.state.paused}
@@ -1382,35 +1351,6 @@ const styles = {
       color: '#FFF',
       fontSize: 11,
       textAlign: 'right',
-    },
-  }),
-  volume: StyleSheet.create({
-    container: {
-      alignItems: 'center',
-      justifyContent: 'flex-start',
-      flexDirection: 'row',
-      height: 1,
-      marginLeft: 20,
-      marginRight: 20,
-      width: 150,
-    },
-    track: {
-      backgroundColor: '#333',
-      height: 1,
-      marginLeft: 7,
-    },
-    fill: {
-      backgroundColor: '#FFF',
-      height: 1,
-    },
-    handle: {
-      position: 'absolute',
-      marginTop: -24,
-      marginLeft: -24,
-      padding: 16,
-    },
-    icon: {
-      marginLeft: 7,
     },
   }),
   seekbar: StyleSheet.create({
