@@ -11,10 +11,10 @@ import {
     Easing,
     Image,
     View,
-    Text
+    Text,
+    TouchableOpacity
 } from "react-native";
 import padStart from "lodash/padStart";
-import { TouchableOpacity } from "react-native";
 
 export default class VideoPlayer extends Component {
     static defaultProps = {
@@ -927,9 +927,36 @@ export default class VideoPlayer extends Component {
                         bottom: 0,
                         left: 0,
                         alignItems: "center",
-                        justifyContent: "center"
+                        justifyContent: "center",
+                        flexDirection: "row"
                     }}
                 >
+                    <TouchableOpacity
+                        onPress={() => {
+                            this.state.currentTime;
+
+                            if (this.state.currentTime > 10) {
+                                this.seekTo(this.state.currentTime - 10);
+                            } else if (this.state.currentTime > 2) {
+                                this.seekTo(this.state.currentTime - 2);
+                            }
+                        }}
+                        activeOpacity={0.5}
+                        style={{
+                            zIndex: 1,
+                            width: 50,
+                            marginRight: 20,
+                            height: 50,
+                            justifyContent: "center",
+                            alignItems: "center"
+                        }}
+                    >
+                        <Image
+                            source={require("./assets/img/seek-back.png")}
+                            style={{ width: 28, height: 28 }}
+                            resizeMode="contain"
+                        />
+                    </TouchableOpacity>
                     <TouchableOpacity
                         onPress={() => {
                             this.resetControlTimeout();
@@ -953,6 +980,32 @@ export default class VideoPlayer extends Component {
                                     : require("./assets/img/pause.png")
                             }
                             style={{ width: 16, height: 19 }}
+                            resizeMode="contain"
+                        />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => {
+                            const remaining = this.state.duration - this.state.currentTime;
+
+                            if (remaining > 10) {
+                                this.seekTo(this.state.currentTime + 10);
+                            } else if (remaining < 10) {
+                                this.seekTo(this.state.currentTime + 2);
+                            }
+                        }}
+                        activeOpacity={0.5}
+                        style={{
+                            zIndex: 1,
+                            width: 50,
+                            marginLeft: 20,
+                            height: 50,
+                            justifyContent: "center",
+                            alignItems: "center"
+                        }}
+                    >
+                        <Image
+                            source={require("./assets/img/seek-forward.png")}
+                            style={{ width: 28, height: 28 }}
                             resizeMode="contain"
                         />
                     </TouchableOpacity>
@@ -1165,9 +1218,6 @@ const styles = {
             marginLeft: 12,
             marginRight: 12,
             marginBottom: 0
-        },
-        volume: {
-            flexDirection: "row"
         },
         fullscreen: {
             flexDirection: "row"
